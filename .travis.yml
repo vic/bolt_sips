@@ -31,5 +31,5 @@ before_install:
 before_script:
   - mix deps.compile
 script:
-  - not (mix compile | grep -A 1 'warning:') # treat compile warnings as errors
+  - ! (mix compile | grep -A 1 'warning:') # treat compile warnings as errors
   - mix test
