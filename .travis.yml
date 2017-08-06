@@ -18,14 +18,18 @@ env:
     - CXX=g++-6
     - CC=gcc-6
     - NEO4J_VERSION=3.1
+    - MIX_ENV=test
 
 elixir:
   - 1.4
+  - 1.5
 
 before_install:
   - if [ ! -d "$HOME/cmake/bin" ]; then wget --no-check-certificate https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.sh && sh cmake-3.5.2-Linux-x86_64.sh --prefix=$HOME/cmake --exclude-subdir; fi
   - docker run --name neo4j -d -p 7687:7687 -e 'NEO4J_AUTH=none' neo4j:$NEO4J_VERSION
   - docker logs -f neo4j | sed /Bolt\ enabled/q
-
+before_script:
+  - mix deps.compile
 script:
+  - (mix compile | grep -A 1 'warning:') && please_fix_those_compile_warnings || true
   - mix test
